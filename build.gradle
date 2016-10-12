@@ -1,0 +1,39 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.2.1'
+    }
+}
+
+apply plugin: 'com.android.application'
+
+repositories {
+    jcenter()
+}
+
+ext {
+    androidSupportLibraryVersion = '24.2.1'
+}
+
+dependencies {
+    compile "com.android.support:support-annotations:${androidSupportLibraryVersion}"
+    compile "com.android.support:appcompat-v7:${androidSupportLibraryVersion}"
+
+    compile 'com.jakewharton.timber:timber:4.3.1'
+}
+
+android {
+    buildToolsVersion '24.0.3'
+    compileSdkVersion 24
+
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 24
+
+        applicationId 'com.sensorfields.digiduck'
+        versionCode Integer.parseInt(appVersionCode)
+        versionName appVersionName
+    }
+}
