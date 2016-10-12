@@ -4,10 +4,12 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.1'
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
     }
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
 
 repositories {
     jcenter()
@@ -20,8 +22,13 @@ ext {
 dependencies {
     compile "com.android.support:support-annotations:${androidSupportLibraryVersion}"
     compile "com.android.support:appcompat-v7:${androidSupportLibraryVersion}"
+    compile "com.android.support:recyclerview-v7:${androidSupportLibraryVersion}"
+    compile "com.android.support:design:${androidSupportLibraryVersion}"
 
     compile 'com.jakewharton.timber:timber:4.3.1'
+
+    compile 'com.jakewharton:butterknife:8.4.0'
+    apt 'com.jakewharton:butterknife-compiler:8.4.0'
 }
 
 android {

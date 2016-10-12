@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <item type="id" name="coordinator" />
+    <item type="id" name="appBar" />
+    <item type="id" name="toolbar" />
+
+    <item type="id" name="recentDocuments" />
+    <item type="id" name="recentSearchButton" />
+    <item type="id" name="recentSortButton" />
+
+    <item type="id" name="settingsButton" />
+
+</resources>

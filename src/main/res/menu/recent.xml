@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@id/recentSearchButton"
+        android:title="@string/recent_search_button"
+        android:icon="@drawable/ic_search"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@id/recentSortButton"
+        android:title="@string/recent_sort_button"
+        android:icon="@drawable/ic_sort"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@id/settingsButton"
+        android:title="@string/settings_button"
+        app:showAsAction="never" />
+
+</menu>

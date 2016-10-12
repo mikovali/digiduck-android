@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Recent -->
+
+    <string name="recent_title">Recent</string>
+    <string name="recent_search_button">Search</string>
+    <string name="recent_sort_button">Sort</string>
+
+    <!-- Settings -->
+
+    <string name="settings_button">Settings</string>
+
+</resources>

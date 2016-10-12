@@ -7,7 +7,7 @@
         android:name=".Application"
         android:theme="@style/Theme.App"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_label">
+        android:label="@string/application_label">
 
         <activity android:name=".Activity"
             android:exported="true" />
