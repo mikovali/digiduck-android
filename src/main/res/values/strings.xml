@@ -6,6 +6,7 @@
     <string name="recent_title">Recent</string>
     <string name="recent_search_button">Search</string>
     <string name="recent_sort_button">Sort</string>
+    <string name="recent_create_button">Create</string>
 
     <!-- Settings -->
 

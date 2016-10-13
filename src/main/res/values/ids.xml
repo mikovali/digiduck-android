@@ -8,6 +8,7 @@
     <item type="id" name="recentDocuments" />
     <item type="id" name="recentSearchButton" />
     <item type="id" name="recentSortButton" />
+    <item type="id" name="recentCreateButton" />
 
     <item type="id" name="settingsButton" />
 
