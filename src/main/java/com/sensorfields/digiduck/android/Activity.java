@@ -1,11 +1,15 @@
 package com.sensorfields.digiduck.android;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.view.ViewGroup;
 
-import com.sensorfields.digiduck.android.view.RecentScreenView;
+import com.sensorfields.digiduck.android.infrastructure.flow.ActivityDispatcher;
+import com.sensorfields.digiduck.android.infrastructure.flow.ParcelableKeyParceler;
+import com.sensorfields.digiduck.android.screen.RecentKey;
+
+import flow.Flow;
 
 /**
  * Recent signed documents
@@ -26,7 +30,22 @@ public class Activity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(new RecentScreenView(this), new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        setContentView(R.layout.activity);
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(Flow.configure(newBase, this)
+                .dispatcher(new ActivityDispatcher(this))
+                .keyParceler(new ParcelableKeyParceler())
+                .defaultKey(new RecentKey())
+                .install());
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!Flow.get(this).goBack()) {
+            super.onBackPressed();
+        }
     }
 }

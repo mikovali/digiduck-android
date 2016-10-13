@@ -1,15 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Global -->
+    <item type="id" name="container" />
+
+    <!-- General -->
     <item type="id" name="coordinator" />
     <item type="id" name="appBar" />
     <item type="id" name="toolbar" />
 
+    <!-- Screens -->
+    <item type="id" name="recent" />
+    <item type="id" name="document" />
+
+    <!-- Recent -->
     <item type="id" name="recentDocuments" />
     <item type="id" name="recentSearchButton" />
     <item type="id" name="recentSortButton" />
     <item type="id" name="recentCreateButton" />
 
+    <!-- Settings -->
     <item type="id" name="settingsButton" />
 
 </resources>
