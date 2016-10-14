@@ -19,6 +19,11 @@
     <item type="id" name="recentSortButton" />
     <item type="id" name="recentCreateButton" />
 
+    <!-- Document -->
+    <item type="id" name="documentContainer" />
+    <item type="id" name="documentFiles" />
+    <item type="id" name="documentSignatures" />
+
     <!-- Settings -->
     <item type="id" name="settingsButton" />
 

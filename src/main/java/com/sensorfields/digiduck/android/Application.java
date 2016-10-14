@@ -3,6 +3,7 @@ package com.sensorfields.digiduck.android;
 import android.content.Context;
 
 import com.sensorfields.digiduck.android.infrastructure.dagger.ApplicationComponent;
+import com.sensorfields.digiduck.android.infrastructure.dagger.ApplicationModule;
 import com.sensorfields.digiduck.android.infrastructure.dagger.DaggerApplicationComponent;
 
 public class Application extends android.app.Application {
@@ -25,6 +26,7 @@ public class Application extends android.app.Application {
 
     protected void setupDagger() {
         applicationComponent = DaggerApplicationComponent.builder()
+                .applicationModule(new ApplicationModule(this))
                 .build();
     }
 

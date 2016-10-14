@@ -8,6 +8,10 @@
     <string name="recent_sort_button">Sort</string>
     <string name="recent_create_button">Create</string>
 
+    <!-- Document -->
+    <string name="document_create_title">New document</string>
+    <string name="document_close_button">Close</string>
+
     <!-- Settings -->
 
     <string name="settings_button">Settings</string>

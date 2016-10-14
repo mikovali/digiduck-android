@@ -2,12 +2,40 @@ package com.sensorfields.digiduck.android.view;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.util.AttributeSet;
-import android.widget.LinearLayout;
 
+import com.sensorfields.digiduck.android.Application;
 import com.sensorfields.digiduck.android.R;
+import com.sensorfields.digiduck.android.model.File;
+import com.sensorfields.digiduck.android.model.FileRepository;
 
-public class DocumentScreenView extends LinearLayout {
+import javax.inject.Inject;
+
+import rx.Subscriber;
+import rx.subscriptions.CompositeSubscription;
+import timber.log.Timber;
+
+public class DocumentScreenView extends CoordinatorLayout {
+
+    @Inject FileRepository fileRepository;
+
+    private final Subscriber<File> fileSubscriber = new Subscriber<File>() {
+        @Override
+        public void onCompleted() {
+            Timber.e("onCompleted");
+        }
+        @Override
+        public void onError(Throwable e) {
+            Timber.e(e, "onError");
+        }
+        @Override
+        public void onNext(File file) {
+            Timber.e("onNext: %s", file);
+        }
+    };
+
+    private final CompositeSubscription subscriptions = new CompositeSubscription();
 
     public DocumentScreenView(Context context) {
         this(context, null);
@@ -19,8 +47,8 @@ public class DocumentScreenView extends LinearLayout {
 
     public DocumentScreenView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        Application.getApplicationComponent(context).inject(this);
         setId(R.id.document);
-        setOrientation(VERTICAL);
         inflate(context, R.layout.document_screen, this);
     }
 }
