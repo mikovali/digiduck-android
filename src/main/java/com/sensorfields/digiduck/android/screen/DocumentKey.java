@@ -1,9 +1,9 @@
 package com.sensorfields.digiduck.android.screen;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.sensorfields.digiduck.android.infrastructure.flow.ViewKey;
 import com.sensorfields.digiduck.android.view.DocumentScreenView;
@@ -13,8 +13,8 @@ import flow.ClassKey;
 public class DocumentKey extends ClassKey implements ViewKey, Parcelable {
 
     @Override
-    public View createView(ViewGroup parentView) {
-        return new DocumentScreenView(parentView.getContext());
+    public View createView(Context context) {
+        return new DocumentScreenView(context);
     }
 
     @Override

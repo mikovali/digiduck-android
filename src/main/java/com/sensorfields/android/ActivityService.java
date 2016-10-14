@@ -28,24 +28,32 @@ public class ActivityService {
     public void onCreate(Activity activity, @Nullable Bundle savedInstanceState) {
         currentActivity = activity;
     }
+
     public void onStart(Activity activity) {
         currentActivity = activity;
     }
+
     public void onResume(Activity activity) {
         currentActivity = activity;
     }
+
     public void onPause(Activity activity) {
     }
+
     public void onStop(Activity activity) {
     }
+
     public void onSaveInstanceState(Activity activity, Bundle outState) {
     }
+
     public void onDestroy(Activity activity) {
         currentActivity = null;
     }
+
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
         activityResultRelay.call(new ActivityResult(requestCode, resultCode, data));
     }
+
     public void onRequestPermissionsResult(Activity activity, int requestCode,
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {

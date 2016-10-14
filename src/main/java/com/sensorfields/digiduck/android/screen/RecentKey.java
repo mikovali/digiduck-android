@@ -1,9 +1,9 @@
 package com.sensorfields.digiduck.android.screen;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.sensorfields.digiduck.android.infrastructure.flow.ViewKey;
 import com.sensorfields.digiduck.android.view.RecentScreenView;
@@ -13,8 +13,8 @@ import flow.ClassKey;
 public final class RecentKey extends ClassKey implements ViewKey, Parcelable {
 
     @Override
-    public View createView(ViewGroup parentView) {
-        return new RecentScreenView(parentView.getContext());
+    public View createView(Context context) {
+        return new RecentScreenView(context);
     }
 
     @Override

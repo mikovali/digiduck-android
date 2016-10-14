@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@id/documentFileAddButton"
+        android:title="@string/document_file_add_button" />
+
+    <item
+        android:id="@id/documentSignatureAddButton"
+        android:title="@string/document_signature_add_button" />
+
+    <item
+        android:id="@id/documentShareButton"
+        android:title="@string/document_share_button" />
+
+</menu>
