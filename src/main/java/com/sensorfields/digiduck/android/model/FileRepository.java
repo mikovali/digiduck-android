@@ -4,5 +4,5 @@ import rx.Observable;
 
 public interface FileRepository {
 
-    Observable<File> get();
+    Observable<File> get(int requestCode);
 }

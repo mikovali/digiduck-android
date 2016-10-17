@@ -27,15 +27,13 @@ public class SafFileRepository implements FileRepository {
     }
 
     @Override
-    public Observable<File> get() {
-        Activity activity = activityService.getCurrentActivity();
-        if (activity != null) {
-            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-            intent.setType("*/*");
-            activity.startActivityForResult(intent, 3);
-        }
+    public Observable<File> get(int requestCode) {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        intent.setType("*/*");
+        activityService.getCurrentActivity().startActivityForResult(intent, requestCode);
+
         return activityService.getActivityResult()
                 .map(new Func1<ActivityService.ActivityResult, File>() {
                     @Override
@@ -54,7 +52,9 @@ public class SafFileRepository implements FileRepository {
                                 fileName = cursor.getString(cursor.getColumnIndex(
                                         DocumentsContract.Document.COLUMN_DISPLAY_NAME));
                             }
-                            cursor.close();
+                            if (cursor != null) {
+                                cursor.close();
+                            }
                         }
 
                         return new File(fileName);

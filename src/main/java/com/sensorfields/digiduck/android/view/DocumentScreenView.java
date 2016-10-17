@@ -20,6 +20,8 @@ import rx.Subscriber;
 import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
 
+import static com.sensorfields.digiduck.android.Constants.DOCUMENT_GET_FILE;
+
 /**
  * Share
  * Add File
@@ -88,7 +90,7 @@ public class DocumentScreenView extends CoordinatorLayout {
 
     private void onFileAddButtonClick() {
         Timber.e("SUBSCRIBE");
-        subscriptions.add(fileRepository.get().subscribe(fileSubscriber));
+        subscriptions.add(fileRepository.get(DOCUMENT_GET_FILE).subscribe(fileSubscriber));
     }
 
     private void onSignatureAddButtonClick() {
