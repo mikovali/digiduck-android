@@ -6,14 +6,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.jakewharton.rxrelay.PublishRelay;
-
-import rx.Observable;
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
 import timber.log.Timber;
 
 public class ActivityService {
 
-    private final PublishRelay<ActivityResult> activityResultRelay = PublishRelay.create();
+    private final PublishSubject<ActivityResult> activityResultSubject = PublishSubject.create();
 
     private Activity currentActivity;
 
@@ -22,7 +21,7 @@ public class ActivityService {
     }
 
     public Observable<ActivityResult> getActivityResult() {
-        return activityResultRelay;
+        return activityResultSubject;
     }
 
     public void onCreate(Activity activity, @Nullable Bundle savedInstanceState) {
@@ -59,7 +58,7 @@ public class ActivityService {
 
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
         Timber.d("onActivityResult: %s, %d, %d, %s", activity, requestCode, resultCode, data);
-        activityResultRelay.call(new ActivityResult(requestCode, resultCode, data));
+        activityResultSubject.onNext(new ActivityResult(requestCode, resultCode, data));
     }
 
     public void onRequestPermissionsResult(Activity activity, int requestCode,

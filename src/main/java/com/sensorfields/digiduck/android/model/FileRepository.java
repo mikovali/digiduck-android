@@ -1,8 +1,11 @@
 package com.sensorfields.digiduck.android.model;
 
-import rx.Observable;
+import io.reactivex.Single;
 
 public interface FileRepository {
 
-    Observable<File> get(int requestCode);
+    /**
+     * TODO Think about this, Maybe could make more sense.
+     */
+    Single<File> get(int requestCode);
 }

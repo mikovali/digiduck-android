@@ -16,8 +16,8 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import rx.Subscriber;
-import rx.subscriptions.CompositeSubscription;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableSingleObserver;
 import timber.log.Timber;
 
 import static com.sensorfields.digiduck.android.Constants.DOCUMENT_GET_FILE;
@@ -35,23 +35,20 @@ public class DocumentScreenView extends CoordinatorLayout {
     @BindView(R.id.documentFiles) FileListView fileListView;
     @BindView(R.id.documentSignatures) SignatureListView signatureListView;
 
-    private final Subscriber<File> fileSubscriber = new Subscriber<File>() {
+    private final DisposableSingleObserver<File> fileSubscriber
+            = new DisposableSingleObserver<File>() {
         @Override
-        public void onCompleted() {
-            Timber.e("onCompleted");
+        public void onSuccess(File value) {
+            Timber.e("onSuccess: %s", value);
+            fileListView.addFile(value);
         }
         @Override
         public void onError(Throwable e) {
             Timber.e(e, "onError");
         }
-        @Override
-        public void onNext(File file) {
-            Timber.e("onNext: %s", file);
-            fileListView.addFile(file);
-        }
     };
 
-    private final CompositeSubscription subscriptions = new CompositeSubscription();
+    private final CompositeDisposable disposables = new CompositeDisposable();
 
     public DocumentScreenView(Context context) {
         this(context, null);
@@ -90,7 +87,7 @@ public class DocumentScreenView extends CoordinatorLayout {
 
     private void onFileAddButtonClick() {
         Timber.e("SUBSCRIBE");
-        subscriptions.add(fileRepository.get(DOCUMENT_GET_FILE).subscribe(fileSubscriber));
+        disposables.add(fileRepository.get(DOCUMENT_GET_FILE).subscribeWith(fileSubscriber));
     }
 
     private void onSignatureAddButtonClick() {
@@ -108,7 +105,7 @@ public class DocumentScreenView extends CoordinatorLayout {
     @Override
     public void onDetachedFromWindow() {
         Timber.e("onDetachedFromWindow");
-        subscriptions.unsubscribe();
+        disposables.dispose();
         super.onDetachedFromWindow();
     }
 }

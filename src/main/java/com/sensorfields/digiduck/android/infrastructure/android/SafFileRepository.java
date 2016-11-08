@@ -12,8 +12,8 @@ import com.sensorfields.android.ActivityService;
 import com.sensorfields.digiduck.android.model.File;
 import com.sensorfields.digiduck.android.model.FileRepository;
 
-import rx.Observable;
-import rx.functions.Func1;
+import io.reactivex.Single;
+import io.reactivex.functions.Function;
 import timber.log.Timber;
 
 public class SafFileRepository implements FileRepository {
@@ -27,7 +27,7 @@ public class SafFileRepository implements FileRepository {
     }
 
     @Override
-    public Observable<File> get(int requestCode) {
+    public Single<File> get(int requestCode) {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
@@ -35,9 +35,9 @@ public class SafFileRepository implements FileRepository {
         activityService.getCurrentActivity().startActivityForResult(intent, requestCode);
 
         return activityService.getActivityResult()
-                .map(new Func1<ActivityService.ActivityResult, File>() {
+                .map(new Function<ActivityService.ActivityResult, File>() {
                     @Override
-                    public File call(ActivityService.ActivityResult activityResult) {
+                    public File apply(ActivityService.ActivityResult activityResult) throws Exception {
                         Timber.e("CALL: %s" , (Looper.myLooper() == Looper.getMainLooper()));
 
                         String fileName = null;
@@ -59,6 +59,6 @@ public class SafFileRepository implements FileRepository {
 
                         return new File(fileName);
                     }
-                });
+                }).singleOrError();
     }
 }
