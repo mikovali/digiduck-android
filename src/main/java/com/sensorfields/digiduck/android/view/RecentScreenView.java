@@ -8,7 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.sensorfields.android.mvp.ViewSavedState;
+import com.sensorfields.android.mvp.ParcelSavedState;
 import com.sensorfields.digiduck.android.R;
 import com.sensorfields.digiduck.android.model.Document;
 import com.sensorfields.digiduck.android.presenter.RecentScreenPresenter;
@@ -24,14 +24,6 @@ import flow.Flow;
 import static com.sensorfields.digiduck.android.Application.getPresenterFactory;
 
 /**
- * Create presenter
- * presenter has onFirstTimeOpeningThisView method
- * presenter can save state easily
- * presenter is created when the view is created (new instance every time)
- * figure out how to create presenter
- *  - maybe inject it to the View, but with a without a scope, always a new instance
- *    but dependencies that are injected to presenter have scope
- *
  * Some registry for Observables (Subjects)
  * Maybe there is some way to do it with Dagger scopes, figure it out
  */
@@ -71,11 +63,11 @@ public class RecentScreenView extends CoordinatorLayout {
 
     @Override
     protected Parcelable onSaveInstanceState() {
-        return ViewSavedState.onSaveInstanceState(super.onSaveInstanceState(), presenter);
+        return ParcelSavedState.onSaveInstanceState(super.onSaveInstanceState(), presenter);
     }
 
     @Override
     protected void onRestoreInstanceState(Parcelable state) {
-        super.onRestoreInstanceState(ViewSavedState.onRestoreInstanceState(state, presenter));
+        super.onRestoreInstanceState(ParcelSavedState.onRestoreInstanceState(state, presenter));
     }
 }

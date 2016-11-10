@@ -1,6 +1,8 @@
 package com.sensorfields.digiduck.android.view;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.sensorfields.android.mvp.ParcelSavedState;
 import com.sensorfields.digiduck.android.model.Document;
 
 import java.util.List;
@@ -17,7 +20,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class DocumentListView extends RecyclerView {
+public class DocumentListView extends RecyclerView implements ParcelSavedState.StateListener {
 
     private final DocumentAdapter adapter;
 
@@ -38,6 +41,26 @@ public class DocumentListView extends RecyclerView {
     public void setDocuments(List<Document> documents) {
         adapter.setDocuments(documents);
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onSaveState(Parcel state) {
+        state.writeTypedList(adapter.documents);
+    }
+
+    @Override
+    public void onRestoreState(Parcel state) {
+        adapter.documents = state.createTypedArrayList(Document.CREATOR);
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        return ParcelSavedState.onSaveInstanceState(super.onSaveInstanceState(), this);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        super.onRestoreInstanceState(ParcelSavedState.onRestoreInstanceState(state, this));
     }
 
     static class DocumentAdapter extends Adapter<DocumentAdapter.DocumentViewHolder> {

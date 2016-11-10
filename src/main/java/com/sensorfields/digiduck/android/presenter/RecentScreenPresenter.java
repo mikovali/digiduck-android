@@ -3,13 +3,38 @@ package com.sensorfields.digiduck.android.presenter;
 import android.os.Parcel;
 import android.view.View;
 
+import com.sensorfields.android.mvp.ParcelSavedState;
 import com.sensorfields.android.mvp.Presenter;
+import com.sensorfields.digiduck.android.model.Document;
 import com.sensorfields.digiduck.android.model.DocumentRepository;
 import com.sensorfields.digiduck.android.view.RecentScreenView;
 
+import java.util.List;
+
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.subjects.AsyncSubject;
 import timber.log.Timber;
 
-public class RecentScreenPresenter implements Presenter {
+public class RecentScreenPresenter implements Presenter, ParcelSavedState.StateListener {
+
+    private static AsyncSubject<List<Document>> findSubject;
+
+    private final DisposableObserver<List<Document>> findObserver
+            = new DisposableObserver<List<Document>>() {
+        @Override
+        public void onNext(List<Document> value) {
+            view.setDocuments(value);
+        }
+        @Override
+        public void onError(Throwable e) {
+            Timber.e(e, "FIND onError");
+        }
+        @Override
+        public void onComplete() {
+            dispose();
+            findSubject = null;
+        }
+    };
 
     private final RecentScreenView view;
     private final DocumentRepository documentRepository;
@@ -33,28 +58,29 @@ public class RecentScreenPresenter implements Presenter {
     }
 
     public void onFirstAttachedToWindow() {
-        Timber.e("onFirstAttachedToWindow");
+        findSubject = AsyncSubject.create();
+        documentRepository.find().toObservable().subscribe(findSubject);
     }
 
     public void onAttachedToWindow() {
-        Timber.e("onAttachedToWindow");
         if (isFirstAttach) {
             onFirstAttachedToWindow();
+        }
+        if (findSubject != null) {
+            findSubject.subscribe(findObserver);
         }
     }
 
     public void onDetachedFromWindow() {
-        Timber.e("onDetachedFromWindow");
+        findObserver.dispose();
     }
 
     @Override
     public void onSaveState(Parcel state) {
-        Timber.e("onSavedState");
     }
 
     @Override
     public void onRestoreState(Parcel state) {
-        Timber.e("onRestoreState");
         isFirstAttach = false;
     }
 
