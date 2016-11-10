@@ -46,11 +46,11 @@ public class ActivityDispatcher implements Dispatcher {
         // destination
         View destinationView = destinationKey.createView(traversal.createContext(destinationKey,
                 parentView.getContext()));
-        parentView.addView(destinationView, ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT);
         if (traversal.direction == Direction.BACKWARD) {
             traversal.getState(destinationKey).restore(destinationView);
         }
+        parentView.addView(destinationView, ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT);
 
         callback.onTraversalCompleted();
     }

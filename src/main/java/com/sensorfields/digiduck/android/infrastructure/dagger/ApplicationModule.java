@@ -4,13 +4,19 @@ import android.app.Application;
 import android.content.ContentResolver;
 
 import com.sensorfields.android.ActivityService;
+import com.sensorfields.android.mvp.Presenter;
 import com.sensorfields.digiduck.android.infrastructure.android.SafFileRepository;
+import com.sensorfields.digiduck.android.infrastructure.android.StorageDocumentRepository;
+import com.sensorfields.digiduck.android.model.DocumentRepository;
 import com.sensorfields.digiduck.android.model.FileRepository;
+import com.sensorfields.digiduck.android.presenter.RecentScreenPresenter;
 
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import dagger.multibindings.ClassKey;
+import dagger.multibindings.IntoMap;
 
 @Module
 public class ApplicationModule {
@@ -34,8 +40,22 @@ public class ApplicationModule {
 
     @Singleton
     @Provides
+    static DocumentRepository documentRepository() {
+        return new StorageDocumentRepository();
+    }
+
+    @Singleton
+    @Provides
     static FileRepository fileRepository(ActivityService activityService,
                                          ContentResolver contentResolver) {
         return new SafFileRepository(activityService, contentResolver);
+    }
+
+    @Singleton
+    @Provides @IntoMap
+    @ClassKey(RecentScreenPresenter.Factory.class)
+    static Presenter.Factory recentScreenPresenterFactory(
+            DocumentRepository documentRepository) {
+        return new RecentScreenPresenter.Factory(documentRepository);
     }
 }
