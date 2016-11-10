@@ -11,7 +11,7 @@ import com.sensorfields.digiduck.android.view.RecentScreenView;
 
 import java.util.List;
 
-import io.reactivex.observers.DisposableObserver;
+import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.subjects.AsyncSubject;
 import timber.log.Timber;
 
@@ -19,20 +19,15 @@ public class RecentScreenPresenter implements Presenter, ParcelSavedState.StateL
 
     private static AsyncSubject<List<Document>> findSubject;
 
-    private final DisposableObserver<List<Document>> findObserver
-            = new DisposableObserver<List<Document>>() {
+    private final DisposableSingleObserver<List<Document>> findObserver
+            = new DisposableSingleObserver<List<Document>>() {
         @Override
-        public void onNext(List<Document> value) {
+        public void onSuccess(List<Document> value) {
             view.setDocuments(value);
         }
         @Override
         public void onError(Throwable e) {
-            Timber.e(e, "FIND onError");
-        }
-        @Override
-        public void onComplete() {
-            dispose();
-            findSubject = null;
+            Timber.e(e, "Find onError");
         }
     };
 
@@ -67,7 +62,7 @@ public class RecentScreenPresenter implements Presenter, ParcelSavedState.StateL
             onFirstAttachedToWindow();
         }
         if (findSubject != null) {
-            findSubject.subscribe(findObserver);
+            findSubject.singleOrError().subscribe(findObserver);
         }
     }
 
