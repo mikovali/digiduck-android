@@ -30,6 +30,9 @@
     <!-- Settings -->
     <item type="id" name="settingsButton" />
 
+    <!-- DocumentList -->
+    <item type="id" name="documentListRecycler" />
+
     <!-- FileList -->
     <item type="id" name="fileName" />
 

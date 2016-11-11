@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -13,15 +14,22 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.sensorfields.android.mvp.ParcelSavedState;
+import com.sensorfields.digiduck.android.R;
 import com.sensorfields.digiduck.android.model.Document;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
 
-public class DocumentListView extends RecyclerView implements ParcelSavedState.StateListener {
+public class DocumentListView extends SwipeRefreshLayout implements
+        SwipeRefreshLayout.OnRefreshListener, ParcelSavedState.StateListener {
 
+    private final PublishSubject<Object> refreshSubject = PublishSubject.create();
+
+    private final RecyclerView recyclerView;
     private final DocumentAdapter adapter;
 
     public DocumentListView(Context context) {
@@ -29,18 +37,30 @@ public class DocumentListView extends RecyclerView implements ParcelSavedState.S
     }
 
     public DocumentListView(Context context, @Nullable AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
+        super(context, attrs);
+        setOnRefreshListener(this);
 
-    public DocumentListView(Context context, @Nullable AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        setLayoutManager(new LinearLayoutManager(context));
-        setAdapter(adapter = new DocumentAdapter());
+        recyclerView = new RecyclerView(context);
+        recyclerView.setId(R.id.documentListRecycler);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        recyclerView.setAdapter(adapter = new DocumentAdapter());
+        addView(recyclerView, new LayoutParams(LayoutParams.MATCH_PARENT,
+                LayoutParams.MATCH_PARENT));
     }
 
     public void setDocuments(List<Document> documents) {
+        setRefreshing(false);
         adapter.setDocuments(documents);
         adapter.notifyDataSetChanged();
+    }
+
+    public Observable<Object> getRefresh() {
+        return refreshSubject;
+    }
+
+    @Override
+    public void onRefresh() {
+        refreshSubject.onNext(Object.class);
     }
 
     @Override
@@ -63,7 +83,7 @@ public class DocumentListView extends RecyclerView implements ParcelSavedState.S
         super.onRestoreInstanceState(ParcelSavedState.onRestoreInstanceState(state, this));
     }
 
-    static class DocumentAdapter extends Adapter<DocumentAdapter.DocumentViewHolder> {
+    static class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.DocumentViewHolder> {
 
         private List<Document> documents;
 
@@ -87,7 +107,7 @@ public class DocumentListView extends RecyclerView implements ParcelSavedState.S
             return documents == null ? 0 : documents.size();
         }
 
-        static class DocumentViewHolder extends ViewHolder {
+        static class DocumentViewHolder extends RecyclerView.ViewHolder {
             @BindView(android.R.id.text1) TextView nameView;
             DocumentViewHolder(View itemView) {
                 super(itemView);
