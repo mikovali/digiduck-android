@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 
 import com.sensorfields.android.ActivityService;
 import com.sensorfields.android.mvp.Presenter;
+import com.sensorfields.android.task.TaskManager;
 import com.sensorfields.digiduck.android.infrastructure.android.SafFileRepository;
 import com.sensorfields.digiduck.android.infrastructure.android.StorageDocumentRepository;
 import com.sensorfields.digiduck.android.model.DocumentRepository;
@@ -36,6 +37,12 @@ public class ApplicationModule {
     @Provides
     static ActivityService activityService() {
         return new ActivityService();
+    }
+
+    @Singleton
+    @Provides
+    static TaskManager observableRegistry() {
+        return new TaskManager();
     }
 
     @Singleton

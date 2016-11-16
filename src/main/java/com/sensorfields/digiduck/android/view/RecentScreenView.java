@@ -10,6 +10,8 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.sensorfields.android.mvp.ParcelSavedState;
+import com.sensorfields.android.task.SingleTask;
+import com.sensorfields.android.task.TaskManager;
 import com.sensorfields.digiduck.android.R;
 import com.sensorfields.digiduck.android.model.Document;
 import com.sensorfields.digiduck.android.model.DocumentRepository;
@@ -26,20 +28,13 @@ import butterknife.OnClick;
 import flow.Flow;
 import io.reactivex.functions.Consumer;
 import io.reactivex.observers.DisposableSingleObserver;
-import io.reactivex.subjects.AsyncSubject;
 import timber.log.Timber;
 
 import static com.sensorfields.digiduck.android.Application.getApplicationComponent;
 
-/**
- * Some registry for Observables (Subjects)
- * Maybe there is some way to do it with Dagger scopes, figure it out
- */
 public class RecentScreenView extends CoordinatorLayout implements ParcelSavedState.StateListener {
 
-    // TODO ObservableRegistry or something
-    private static AsyncSubject<List<Document>> findSubject;
-
+    @Inject TaskManager taskManager;
     @Inject DocumentRepository documentRepository;
 
     @BindView(R.id.toolbar) Toolbar toolbarView;
@@ -52,17 +47,16 @@ public class RecentScreenView extends CoordinatorLayout implements ParcelSavedSt
             = new DisposableSingleObserver<List<Document>>() {
         @Override
         public void onSuccess(List<Document> value) {
+            Timber.e("Find onSuccess: %s", value);
             setDocuments(value);
-            dispose();
-            findSubject = null;
         }
         @Override
         public void onError(Throwable e) {
             Timber.e(e, "Find onError");
-            dispose();
-            findSubject = null;
         }
     };
+
+    private final SingleTask<List<Document>> findTask;
 
     public RecentScreenView(Context context) {
         this(context, null);
@@ -86,9 +80,11 @@ public class RecentScreenView extends CoordinatorLayout implements ParcelSavedSt
                 find();
             }
         });
+        findTask = taskManager.getSingle(this, 0, findObserver);
     }
 
     public void setDocuments(List<Document> documents) {
+        Timber.e("setDocuments: %s", documents);
         documentsView.setDocuments(documents);
     }
 
@@ -98,10 +94,7 @@ public class RecentScreenView extends CoordinatorLayout implements ParcelSavedSt
     }
 
     void find() {
-        if (findSubject == null) {
-            findSubject = AsyncSubject.create();
-            documentRepository.find().toObservable().subscribe(findSubject);
-        }
+        findTask.start(documentRepository.find());
     }
 
     @Override
@@ -110,15 +103,6 @@ public class RecentScreenView extends CoordinatorLayout implements ParcelSavedSt
         if (create.get()) {
             find();
         }
-        if (findSubject != null) {
-            findSubject.singleOrError().subscribe(findObserver);
-        }
-    }
-
-    @Override
-    public void onDetachedFromWindow() {
-        findObserver.dispose();
-        super.onDetachedFromWindow();
     }
 
     @Override
