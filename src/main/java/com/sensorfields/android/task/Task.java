@@ -1,5 +1,9 @@
 package com.sensorfields.android.task;
 
+import android.support.annotation.Nullable;
+
+import java.util.concurrent.Callable;
+
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.subjects.BehaviorSubject;
@@ -10,7 +14,9 @@ public abstract class Task<T, S, O extends Disposable> {
 
     private Subject<T> subject;
 
-    private O observer;
+    private Callable<O> observerFactory;
+
+    @Nullable private O observer;
 
     private DisposableObserver<T> terminalEventObserver;
 
@@ -26,13 +32,13 @@ public abstract class Task<T, S, O extends Disposable> {
 
     protected abstract void subscribeToObserver(Subject<T> subject, O observer);
 
-    void setObserver(O observer) {
-        this.observer = observer;
+    void setObserverFactory(Callable<O> observerFactory) {
+        this.observerFactory = observerFactory;
     }
 
     void attach() {
         if (subject != null && !subject.hasObservers()) {
-            subscribeToObserver(subject, observer);
+            subscribeToObserver(subject, getObserver());
             terminalEventObserver = subject.subscribeWith(new DisposableObserver<T>() {
                 @Override
                 public void onNext(T value) {}
@@ -50,6 +56,28 @@ public abstract class Task<T, S, O extends Disposable> {
 
     void detach() {
         Timber.e("DETACH");
+        dispose();
+        observerFactory = null;
+    }
+
+    void finish() {
+        Timber.e("FINISH");
+        dispose();
+        subject = null;
+    }
+
+    private O getObserver() {
+        if (observer == null) {
+            try {
+                observer = observerFactory.call();
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Observable factory failed.", e);
+            }
+        }
+        return observer;
+    }
+
+    private void dispose() {
         if (terminalEventObserver != null) {
             terminalEventObserver.dispose();
         }
@@ -58,17 +86,5 @@ public abstract class Task<T, S, O extends Disposable> {
             observer.dispose();
         }
         observer = null;
-    }
-
-    void finish() {
-        Timber.e("FINISH");
-        if (terminalEventObserver != null) {
-            terminalEventObserver.dispose();
-        }
-        terminalEventObserver = null;
-        if (observer != null) {
-            observer.dispose();
-        }
-        subject = null;
     }
 }

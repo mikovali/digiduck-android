@@ -18,6 +18,7 @@ import com.sensorfields.digiduck.android.model.DocumentRepository;
 import com.sensorfields.digiduck.android.screen.DocumentKey;
 
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
@@ -43,19 +44,6 @@ public class RecentScreenView extends CoordinatorLayout implements ParcelSavedSt
 
     private final AtomicBoolean create = new AtomicBoolean(true);
 
-    private final DisposableSingleObserver<List<Document>> findObserver
-            = new DisposableSingleObserver<List<Document>>() {
-        @Override
-        public void onSuccess(List<Document> value) {
-            Timber.e("Find onSuccess: %s", value);
-            setDocuments(value);
-        }
-        @Override
-        public void onError(Throwable e) {
-            Timber.e(e, "Find onError");
-        }
-    };
-
     private final SingleTask<List<Document>> findTask;
 
     public RecentScreenView(Context context) {
@@ -80,7 +68,23 @@ public class RecentScreenView extends CoordinatorLayout implements ParcelSavedSt
                 find();
             }
         });
-        findTask = taskManager.getSingle(this, 0, findObserver);
+        findTask = taskManager.getSingle(this, 0,
+                new Callable<DisposableSingleObserver<List<Document>>>() {
+            @Override
+            public DisposableSingleObserver<List<Document>> call() throws Exception {
+                return new DisposableSingleObserver<List<Document>>() {
+                    @Override
+                    public void onSuccess(List<Document> value) {
+                        Timber.e("Find onSuccess: %s", value);
+                        setDocuments(value);
+                    }
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e, "Find onError");
+                    }
+                };
+            }
+        });
     }
 
     public void setDocuments(List<Document> documents) {

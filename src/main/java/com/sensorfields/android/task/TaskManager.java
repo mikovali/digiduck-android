@@ -5,6 +5,7 @@ import android.view.View;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.observers.DisposableSingleObserver;
@@ -13,26 +14,28 @@ public class TaskManager {
 
     private final SparseArray<Task<?, ?, ?>> tasks = new SparseArray<>();
 
-    public <T> ObservableTask<T> getObservable(View view, int id, DisposableObserver<T> observer) {
+    public <T> ObservableTask<T> getObservable(View view, int id,
+                                               Callable<DisposableObserver<T>> observerFactory) {
         @SuppressWarnings("unchecked") ObservableTask<T> task = (ObservableTask<T>) tasks.get(id);
         if (task == null) {
             task = new ObservableTask<>();
             tasks.put(id, task);
         }
-        task.setObserver(observer);
+        task.setObserverFactory(observerFactory);
 
         viewShit(view, id);
 
         return task;
     }
 
-    public <T> SingleTask<T> getSingle(View view, int id, DisposableSingleObserver<T> observer) {
+    public <T> SingleTask<T> getSingle(View view, int id,
+                                       Callable<DisposableSingleObserver<T>> observerFactory) {
         @SuppressWarnings("unchecked") SingleTask<T> task = (SingleTask<T>) tasks.get(id);
         if (task == null) {
             task = new SingleTask<>();
             tasks.put(id, task);
         }
-        task.setObserver(observer);
+        task.setObserverFactory(observerFactory);
 
         viewShit(view, id);
 
